@@ -1,0 +1,29 @@
+version: '2'
+services:
+  mariadb:
+    image: mariadb
+    volumes:
+      - ./db/Moodle:/var/lib/mysql
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_ROOT_USER=root
+      - MYSQL_DATABASE=moodle
+  moodle:
+    image: bitnami/moodle:latest
+    ports:
+      - 8181:8080
+      - 8443:8443
+    environment:
+      - MOODLE_DATABASE_HOST=mariadb
+      - MOODLE_DATABASE_USER=root
+      - MOODLE_DATABASE_PASSWORD=root
+      - MOODLE_DATABASE_NAME=moodle
+      - PUID=998
+      - PGID=100
+    volumes:
+      - ./web/Moodle:/bitnami/moodle
+      - ./web/MoodleData:/bitnami/moodledata
+    depends_on:
+      - mariadb
+    links:
+      - mariadb:mariadb
